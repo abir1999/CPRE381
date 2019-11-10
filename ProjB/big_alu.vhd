@@ -40,6 +40,14 @@ port(
 	     out_Shift : out std_logic_vector(N-1 downto 0));
 end component;
 
+component mux2_1
+port(i_S          : in std_logic;
+       i_A		:in std_logic;
+	i_B		:in std_logic;
+	o_OUT          : out std_logic);
+
+end component;
+
 component mux2_1dataflow
 generic( N: integer := 32);
 
@@ -59,9 +67,9 @@ process(OPCODE)
 begin
 if(OPCODE = "100000") then
 s_outputsrc <= '1';
-if(OPCODE = "110000") then
+elsif(OPCODE = "110000") then
 s_outputsrc <= '1';
-if(OPCODE = "111000") then
+elsif(OPCODE = "111000") then
 s_outputsrc <= '1';
 else
 s_outputsrc <= '0';
@@ -73,7 +81,7 @@ mainalu : alu
 port map(
 	A => in_A,
 	B => in_B,
-	unsignd => OPCODE(5);
+	unsignd => OPCODE(5),
 	OPCODE => opcode(4 downto 0),
 	o_Overflow => s_overflow,
 	o_ResultF => s_aluout,
@@ -95,12 +103,12 @@ port map(
 	i_B => s_shifterout,
 	o_F => output_alu);
 
-add_subunsigned : mux2_1dataflow  --when unsigned we want overflow = 0
+add_subunsigned : mux2_1  --when unsigned we want overflow = 0
 port map(
 	i_S => OPCODE(5),
 	i_A => s_overflow,
 	i_B => '0',
-	o_F => o_overflow);
+	o_OUT => o_overflow);
 
 end structure;
 

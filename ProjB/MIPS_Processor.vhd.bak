@@ -319,7 +319,7 @@ ALUorMEM_mux : mux2_1dataflow
 port map(	i_S	=> s_MemtoReg,
 		i_A 	=> s_ALUOut,
 		i_B	=> s_DMemOut,
-		o_F	=> s_alu_mem_out);
+		o_F	=> s_alu_mem_out;
 
 luishifter: lui_shifter
 port map(	i_A	=> s_Inst(15 downto 0),
