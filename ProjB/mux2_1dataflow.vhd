@@ -3,7 +3,7 @@ use IEEE.std_logic_1164.all;
 
 
 entity mux2_1dataflow is
-generic( N: integer := 2);
+generic( N: integer := 32);
 
 port(	i_S  : in std_logic;
 	i_A  : in std_logic_vector(N-1 downto 0);

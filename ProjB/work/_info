@@ -582,7 +582,7 @@ R26
 R11
 R12
 Emips_processor
-Z68 w1573373131
+Z68 w1573424473
 R2
 R3
 R0
@@ -594,9 +594,9 @@ V:o>C8KMfc[QmXhUL_3eIH3
 !s100 ^i1^b5_W1>L_al]g]Ha6H1
 R6
 32
-Z71 !s110 1573373134
+Z71 !s110 1573424475
 !i10b 1
-Z72 !s108 1573373134.000000
+Z72 !s108 1573424475.000000
 Z73 !s90 -reportprogress|300|-work|work|U:/University/cpre381/ProjB/MIPS_Processor.vhd|
 Z74 !s107 U:/University/cpre381/ProjB/MIPS_Processor.vhd|
 !i113 1
@@ -608,8 +608,8 @@ R3
 Z75 DEx4 work 14 mips_processor 0 22 :o>C8KMfc[QmXhUL_3eIH3
 l200
 L32
-VM[YPKd;[KD1N[g8GX=aYL0
-!s100 gaGiMBg`_YV@TCVQ`dWfb1
+V>0Tigh;iU4WnC=GQe6S@N2
+!s100 7M[9dkP@T8JGF;GWCBEG[0
 R6
 32
 R71
@@ -660,7 +660,7 @@ R26
 R11
 R12
 Emux2_1dataflow
-Z79 w1573357533
+Z79 w1573374462
 R2
 R3
 R0
@@ -668,13 +668,13 @@ Z80 8U:/University/cpre381/ProjB/mux2_1dataflow.vhd
 Z81 FU:/University/cpre381/ProjB/mux2_1dataflow.vhd
 l0
 L5
-V=joGnCZ:`>X=PC2l;7TOR1
-!s100 BBNMeLK^_l;0X78XZ:P1b1
+VlkKKQf3e5d>V31=fE1dKB1
+!s100 8d]3PmfhEQW:IY?WiE7KJ3
 R6
 32
-Z82 !s110 1573357538
+Z82 !s110 1573374475
 !i10b 1
-Z83 !s108 1573357538.000000
+Z83 !s108 1573374475.000000
 Z84 !s90 -reportprogress|300|-work|work|U:/University/cpre381/ProjB/mux2_1dataflow.vhd|
 Z85 !s107 U:/University/cpre381/ProjB/mux2_1dataflow.vhd|
 !i113 1
@@ -683,7 +683,7 @@ R12
 Adataflow
 R2
 R3
-DEx4 work 14 mux2_1dataflow 0 22 =joGnCZ:`>X=PC2l;7TOR1
+DEx4 work 14 mux2_1dataflow 0 22 lkKKQf3e5d>V31=fE1dKB1
 l19
 L17
 V@ZliS<;K;eo[cIU3F``642

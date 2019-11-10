@@ -242,6 +242,8 @@ port map(	in_32bits	=> pc_out,
 		o_4plus32bits	=> adder_out);
 		--o_COUT		=> ;
 
+s_NextInstAddr <= pc_out;
+
 ctrl: Control
 port map(	Opcode		=> s_Opcode,
 		Funct		=> s_Funct,
