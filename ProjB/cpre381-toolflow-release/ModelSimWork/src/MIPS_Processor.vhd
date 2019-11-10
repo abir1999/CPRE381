@@ -65,6 +65,138 @@ architecture structure of MIPS_Processor is
   -- TODO: You may add any additional signals or components your implementation 
   --       requires below this comment
 
+component pc_reg
+generic(	N	: integer :=32);
+port(		 data_in	: in std_logic_vector(N-1 downto 0);
+	    	 reset_PC	: in std_logic;
+	     	 wr_en_PC	: in std_logic;
+	    	 data_out	: out std_logic_vector(N-1 downto 0);
+	    	 clk	: in std_logic);
+end component;
+
+
+component add4to32bits
+generic (N : integer := 32);
+port(	in_32bits	: in std_logic_vector(N-1 downto 0);	     
+	o_4plus32bits	: out std_logic_vector(N-1 downto 0);
+	o_COUT		: out std_logic);
+
+end component; 
+
+ component ripple_adder
+ generic (N: integer:=32);
+ port(	
+	i_Cin : in std_logic;
+	i_B0 : in std_logic_vector (N-1 downto 0);
+	i_B1 : in std_logic_vector (N-1 downto 0);
+	o_Out : out std_logic_vector (N-1 downto 0); --including final carry out
+	o_cout: out std_logic);
+end component;
+
+component control
+port(		Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine instruction
+		Funct		: in std_logic_vector(5 downto 0);		-- Bits [5-0] of machine instruction
+		--Bne		: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
+		Jump		: out std_logic;
+		Branch		: out std_logic;
+		MemWrite	: out std_logic;
+		MemRead		: out std_logic;
+		RegWrite	: out std_logic;
+		MemtoReg	: out std_logic;
+		ALUSrc		: out std_logic;
+		RegDst		: out std_logic;
+		ALUOpcode	: out std_logic_vector(5 downto 0);	-- Control signal for ALU
+		Lui		: out std_logic;
+		ShiftSrc	: out std_logic); --for v-type shifts or shamt from instruction
+	
+end component;
+
+component regfile
+port(i_CLK        : in std_logic;     -- Clock input
+       i_RST        : in std_logic;     -- Reset input
+       i_WE         : in std_logic;     -- Write enable input
+       i_Waddr      : in std_logic_vector(4 downto 0);
+       i_Raddr1     : in std_logic_vector(4 downto 0);
+       i_Raddr2     : in std_logic_vector(4 downto 0);
+       i_Din        : in std_logic_vector(N-1 downto 0);     -- Data value input
+       o_Qout1      : out std_logic_vector(N-1 downto 0);    --Data output 1
+	o_Qout2     : out std_logic_vector(N-1 downto 0);
+	register2   : out std_logic_vector(31 downto 0));   -- Data output 2
+
+end component;
+
+component mux2_1dataflow
+generic( N: integer := 32);
+port(	i_S  : in std_logic;
+	i_A  : in std_logic_vector(N-1 downto 0);
+	i_B  : in std_logic_vector(N-1 downto 0);	
+	o_F  : out std_logic_vector(N-1 downto 0));
+
+end component;
+
+component extender
+generic (Z : integer := 16);
+port(
+	input : in std_logic_vector(Z-1 downto 0);
+	output : out std_logic_vector(31 downto 0);
+	sign : in std_logic);
+end component;
+
+component big_alu
+port(
+	opcode 	: in  std_logic_vector(5 downto 0);
+	in_A 	: in std_logic_vector (31 downto 0);
+	in_B	: in std_logic_vector (31 downto 0);
+	shftamt	: in std_logic_vector (4 downto 0);
+	output_alu	: out std_logic_vector (31 downto 0);
+	o_overflow : out std_logic;
+	o_carryout : out std_logic;
+	o_Zero : out std_logic);
+
+end component;
+
+component lui_shifter
+port(
+	i_A : in std_logic_vector(15 downto 0);
+	o_B : out std_logic_vector(31 downto 0));
+
+end component;
+
+--signals for Control--
+	signal s_Opcode		: std_logic_vector(5 downto 0);	-- Bits [31-26] of machine instruction
+	signal s_Funct		: std_logic_vector(5 downto 0);	-- Bits [5-0] of machine instruction
+	signal s_Lui		: std_logic;
+	signal s_Jump		: std_logic;
+	signal s_Branch		: std_logic;
+	signal s_MemWrite	: std_logic;
+	signal s_MemRead	: std_logic;
+	signal s_RegWrite	: std_logic;
+	signal s_MemtoReg	: std_logic;
+	signal s_ALUSrc		: std_logic;
+	signal s_RegDst		: std_logic;
+	signal s_ShiftSrc	: std_logic;
+	signal s_ALUOpcode	: std_logic_vector(5 downto 0);
+
+--PC signals--
+	signal pc_out	: std_logic_vector(31 downto 0);
+	signal adder_out : std_logic_vector(31 downto 0);
+
+--regfile signals--
+	signal s_regdata1 : std_logic_vector(31 downto 0);
+	signal s_regdata2 : std_logic_vector(31 downto 0);
+
+	signal s_immi_extend : std_logic_vector(31 downto 0);
+	signal s_ALUSrc_mux  : std_logic_vector(31 downto 0);
+
+--ALU signals--
+	signal s_overflow,s_Zero,s_carryout : std_logic;
+	signal s_ALUOut : std_logic_vector(31 downto 0);
+	signal s_shiftmux : std_logic_vector(4 downto 0);
+	signal s_alu_mem_out : std_logic_vector(31 downto 0);
+
+--addition control mux signals--
+	signal s_lui_mux_out, s_lui_out : std_logic_vector(31 downto 0);
+
 begin
 
   -- TODO: This is required to be your final input to your instruction memory. This provides a feasible method to externally load the memory module which means that the synthesis tool must assume it knows nothing about the values stored in the instruction memory. If this is not included, much, if not all of the design is optimized out because the synthesis tool will believe the memory to be all zeros.
@@ -95,4 +227,111 @@ begin
 
   -- TODO: Implement the rest of your processor below this comment! 
 
+
+PC: pc_reg
+generic map( N => 32)
+port map(    data_in	=> adder_out,
+	     reset_PC	=> iRST,
+	     wr_en_PC	=> '1',
+	     data_out	=> pc_out,
+	     clk	=> iCLK);
+
+pcadder : add4to32bits
+generic map( N => 32)
+port map(	in_32bits	=> pc_out,	     
+		o_4plus32bits	=> adder_out);
+		--o_COUT		=> ;
+
+ctrl: Control
+port map(	Opcode		=> s_Opcode,
+		Funct		=> s_Funct,
+		ShiftSrc	=> s_ShiftSrc,		
+		Lui		=> s_Lui,
+		Jump		=> s_Jump,
+		Branch		=> s_Branch, --not hooked to anything
+		MemWrite	=> s_MemWrite,
+		MemRead		=> s_MemRead,
+		RegWrite	=> s_RegWrite,
+		MemtoReg	=> s_MemtoReg,
+		ALUSrc		=> s_ALUSrc,
+		RegDst		=> s_RegDst,
+		ALUOpcode	=> s_ALUOpcode);
+
+s_Opcode <= s_Inst(31 downto 26);
+s_Funct	 <= s_Inst(5 downto 0);
+s_RegWr  <= s_RegWrite;
+
+regdst_mux : mux2_1dataflow
+generic map(N => 5)
+port map(	i_S	=> s_RegDst,
+		i_A	=> s_Inst(20 downto 16),
+		i_B	=> s_Inst(15 downto 11),
+		o_F	=> s_RegWrAddr);
+
+
+register_file: regfile
+port map(	i_CLK        => iCLK,
+      		i_RST        => iRST,
+      		i_WE         => s_RegWr,
+       		i_Waddr      => s_RegWrAddr,
+       		i_Raddr1     => s_Inst(25 downto 21),
+       		i_Raddr2     => s_Inst(20 downto 16),
+       		i_Din        => s_RegWrData,
+       		o_Qout1      => s_regdata1,
+		o_Qout2      => s_regdata2,
+		register2    => v0);
+
+immi_extend : extender
+port map(	input  => s_Inst(15 downto 0),
+		output => s_immi_extend,
+		sign   => '1');
+
+ALUsrc_mux : mux2_1dataflow
+port map(	i_S	=> s_ALUSrc,
+		i_A 	=> s_regdata2,
+		i_B	=> s_immi_extend,
+		o_F	=> s_ALUSrc_mux);
+
+mainALU : big_alu
+port map(	opcode 		=> s_ALUOpcode,
+		in_A 		=> s_regdata1,
+		in_B		=> s_ALUSrc_mux,
+		shftamt		=> s_shiftmux, -- choose from v-type shift or R-type shamt.
+		output_alu	=> s_ALUOut,
+		o_overflow 	=> s_overflow,
+		o_carryout 	=> s_carryout,
+		o_Zero 		=> s_Zero);
+
+oALUOut <= s_ALUOut;
+
+s_DMemWr	<= s_MemWrite; --from Control unit
+s_DMemAddr	<= s_ALUOut; --address from ALU output
+s_DMemData	<= s_regdata2;  --write data to mem from regfile read data 2
+
+shiftmux : mux2_1dataflow
+generic map( N => 5)
+port map(	i_S	=> s_ShiftSrc,
+		i_A 	=> s_Inst(10 downto 6),
+		i_B	=> s_regdata1(4 downto 0),
+		o_F	=> s_shiftmux);
+	
+ALUorMEM_mux : mux2_1dataflow
+port map(	i_S	=> s_MemtoReg,
+		i_A 	=> s_ALUOut,
+		i_B	=> s_DMemOut,
+		o_F	=> s_alu_mem_out);
+
+luishifter: lui_shifter
+port map(	i_A	=> s_Inst(15 downto 0),
+		o_B	=> s_lui_out);
+
+lui_mux : mux2_1dataflow
+port map(	i_S	=> s_Lui,
+		i_A	=> s_alu_mem_out,
+		i_B	=> s_lui_out,
+		o_F	=> s_lui_mux_out);
+
+s_RegWrData <= s_lui_mux_out;
+
 end structure;
+

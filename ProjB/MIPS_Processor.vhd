@@ -309,10 +309,10 @@ s_DMemAddr	<= s_ALUOut; --address from ALU output
 s_DMemData	<= s_regdata2;  --write data to mem from regfile read data 2
 
 shiftmux : mux2_1dataflow
-generic map( N => 1)
+generic map( N => 5)
 port map(	i_S	=> s_ShiftSrc,
 		i_A 	=> s_Inst(10 downto 6),
-		i_B	=> s_regdata1,
+		i_B	=> s_regdata1(4 downto 0),
 		o_F	=> s_shiftmux);
 	
 ALUorMEM_mux : mux2_1dataflow

@@ -45,10 +45,17 @@ port(i_A          : in std_logic;
 end component;
 
 component mux2_1dataflow
+generic( N: integer := 1);
 port(	i_S :in std_logic;
-	i_A :in std_logic;
-	i_B :in std_logic;
-	o_F :out std_logic);
+	i_A :in std_logic_vector(N-1 downto 0);
+	i_B :in std_logic_vector(N-1 downto 0);
+	o_F :out std_logic_vector(N-1 downto 0));
+end component;
+
+component andg2
+port(i_A          : in std_logic;
+       i_B          : in std_logic;
+       o_F          : out std_logic);
 end component;
 
 
@@ -59,8 +66,9 @@ signal s_set, s_overflow: std_logic_vector(31 downto 0);
 signal s_slt : std_logic;
 signal f_zer : std_logic:='0';
 signal s_output : std_logic_vector(31 downto 0);
-signal s_setsel : std_logic;
-signal s_carryinvert : std_logic;
+signal s_setsel : std_logic_vector(0 downto 0);
+signal s_carryinvert : std_logic_vector(0 downto 0);
+signal s_setbit : std_logic_vector(0 downto 0);
 
 begin
 
@@ -81,20 +89,25 @@ end process;
 invertcarry : invg
 port map(
 	i_A => s_carry(32),
-	o_F => s_carryinvert);
+	o_F => s_carryinvert(0));
 
 setsel : mux2_1dataflow
 port map(
-	i_S =>unsignd,
-	i_A => s_set(31),
+	i_S => unsignd,
+	i_A => s_setbit,
 	i_B => s_carryinvert,
 	o_F => s_setsel);
 
 xor1: xorg2
 port map(
-	i_A => s_setsel,
+	i_A => s_setsel(0),
 	i_B => s_overflow(31),
 	o_F => s_slt);
+
+andset : andg2
+port map(i_A      => s_set(31),
+       i_B        => '1',
+       o_F        => s_setbit(0));
 
 
 full_alu : alu_1b
