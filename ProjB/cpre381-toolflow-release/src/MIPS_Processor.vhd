@@ -74,6 +74,12 @@ port(		 data_in	: in std_logic_vector(N-1 downto 0);
 	    	 clk	: in std_logic);
 end component;
 
+--Abhilash added:---------------------------------
+component shift26
+port(	i_A : in std_logic_vector(25 downto 0);
+		o_B : out std_logic_vector(27 downto 0));
+end component;
+--------------------------------------------------
 
 component add4to32bits
 generic (N : integer := 32);
@@ -180,6 +186,8 @@ end component;
 --PC signals--
 	signal pc_out	: std_logic_vector(31 downto 0);
 	signal adder_out : std_logic_vector(31 downto 0);
+	signal shifted28 : std_logic_vector(27 downto 0);	--Abhilash
+	signal s_28PC4	 : std_logic_vector(31 downto 0);	--Abhilash
 
 --regfile signals--
 	signal s_regdata1 : std_logic_vector(31 downto 0);
@@ -230,7 +238,7 @@ begin
 
 PC: pc_reg
 generic map( N => 32)
-port map(    data_in	=> adder_out,
+port map(    data_in	=> adder_out,	--Abhilash added: change adder_out to whatever final signal happens to be
 	     reset_PC	=> iRST,
 	     wr_en_PC	=> '1',
 	     data_out	=> pc_out,
@@ -241,9 +249,17 @@ generic map( N => 32)
 port map(	in_32bits	=> pc_out,	     
 		o_4plus32bits	=> adder_out);
 		--o_COUT		=> ;
+		
+----Abhilash added:------------------------------
+shft26	:  shift26
+port map(	i_A	=>	s_Inst(25 downto 0),
+			o_B	=>	shifted28);
 
+s_28PC4 <= pc_out(31 downto 28) & shifted28;
+
+--s_immi_extend
+----------------------------------------------------
 s_NextInstAddr <= pc_out;
-
 ctrl: Control
 port map(	Opcode		=> s_Opcode,
 		Funct		=> s_Funct,
