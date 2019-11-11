@@ -79,6 +79,15 @@ component shift26
 port(	i_A : in std_logic_vector(25 downto 0);
 		o_B : out std_logic_vector(27 downto 0));
 end component;
+
+component shiftALL
+generic(N : integer := 32);
+port(	input_A : in std_logic_vector(N-1 downto 0);
+	     shiftBy_Sel : in std_logic_vector(4 downto 0);
+	     left_right_Sel: in std_logic;
+	     log_arith_Sel: in std_logic;
+	     out_Shift : out std_logic_vector(N-1 downto 0));
+end component;
 --------------------------------------------------
 
 component add4to32bits
@@ -186,8 +195,11 @@ end component;
 --PC signals--
 	signal pc_out	: std_logic_vector(31 downto 0);
 	signal adder_out : std_logic_vector(31 downto 0);
-	signal shifted28 : std_logic_vector(27 downto 0);	--Abhilash
-	signal s_28PC4	 : std_logic_vector(31 downto 0);	--Abhilash
+	signal shifted28 : std_logic_vector(27 downto 0);	--Abhilash	= shifted 26 bit (from j-types) by 2
+	signal s_28PC4	 : std_logic_vector(31 downto 0);	--Abhilash	=concat (PC+4) &  shifted28
+	signal s_shiftBranch: std_logic_vector(31 downto 0);--Abhilash	=shifted s_immi_extend by 2
+	signal s_BranchPC:	std_logic_vector(31 downto 0);  --Abhilash  =(PC+4)+imm
+	signal s_Br_adderout: std_logic_vector(31 downto 0); --Abhilash mux result between 0:(adder_out) and 1:((PC+4)+imm)
 
 --regfile signals--
 	signal s_regdata1 : std_logic_vector(31 downto 0);
@@ -250,15 +262,36 @@ port map(	in_32bits	=> pc_out,
 		o_4plus32bits	=> adder_out);
 		--o_COUT		=> ;
 		
-----Abhilash added:------------------------------
+----Abhilash added:------------------------------------------------------
 shft26	:  shift26
 port map(	i_A	=>	s_Inst(25 downto 0),
 			o_B	=>	shifted28);
 
 s_28PC4 <= pc_out(31 downto 28) & shifted28;
 
---s_immi_extend
-----------------------------------------------------
+shiftBranch: shiftALL
+port map(	input_A => s_immi_extend,
+			shiftBy_Sel => "00010",
+			left_right_Sel => '0',
+			log_arith_Sel => '0',
+			out_Shift =>s_shiftBranch);
+
+add_BranchAddr: ripple_adder
+port map(	i_Cin => '0',
+			i_B0  => s_shiftBranch,
+			i_B1  => adder_out,
+			o_Out => s_BranchPC); --including final carry out
+			--o_cout: out std_logic);
+
+
+PCsrcMUX :	mux2_1dataflow
+port map (	i_S  => s_Branch, --change s_Branch to (s_Branch).(Z) + (~Z).(Bne)
+			i_A  => adder_out,  --if mux's selector =0,choose adder_out
+			i_B  => s_BranchPC,	--if mux's selector =1,choose s_BranchPC
+			o_F  => s_Br_adderout);
+			
+---------------------------------------------------------------------------
+
 s_NextInstAddr <= pc_out;
 ctrl: Control
 port map(	Opcode		=> s_Opcode,
