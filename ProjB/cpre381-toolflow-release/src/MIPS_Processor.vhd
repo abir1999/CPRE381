@@ -116,10 +116,11 @@ end component;
 end component;
 
 component control
-port(		Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine instruction
+port(	Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine instruction
 		Funct		: in std_logic_vector(5 downto 0);		-- Bits [5-0] of machine instruction
-		--Bne		: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
+		Bne			: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
 		Jump		: out std_logic;
+		JumpType	: out std_logic;
 		Branch		: out std_logic;
 		MemWrite	: out std_logic;
 		MemRead		: out std_logic;
@@ -128,7 +129,7 @@ port(		Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine i
 		ALUSrc		: out std_logic;
 		RegDst		: out std_logic;
 		ALUOpcode	: out std_logic_vector(5 downto 0);	-- Control signal for ALU
-		Lui		: out std_logic;
+		Lui			: out std_logic;
 		ShiftSrc	: out std_logic); --for v-type shifts or shamt from instruction
 	
 end component;
@@ -189,7 +190,9 @@ end component;
 	signal s_Funct		: std_logic_vector(5 downto 0);	-- Bits [5-0] of machine instruction
 	signal s_Lui		: std_logic;
 	signal s_Jump		: std_logic;
+	signal s_JumpType	: std_logic;
 	signal s_Branch		: std_logic;
+	signal s_Bne		:std_logic;
 	signal s_MemWrite	: std_logic;
 	signal s_MemRead	: std_logic;
 	signal s_RegWrite	: std_logic;
@@ -201,13 +204,14 @@ end component;
 
 --PC signals--
 	signal pc_out	: std_logic_vector(31 downto 0);
-	signal adder_out : std_logic_vector(31 downto 0);
+	signal pcadder_out : std_logic_vector(31 downto 0);
 	signal shifted28 : std_logic_vector(27 downto 0);	--Abhilash	= shifted 26 bit (from j-types) by 2
 	signal s_28PC4	 : std_logic_vector(31 downto 0);	--Abhilash	=concat (PC+4) &  shifted28
 	signal s_shiftBranch: std_logic_vector(31 downto 0);--Abhilash	=shifted s_immi_extend by 2
 	signal s_BranchPC:	std_logic_vector(31 downto 0);  --Abhilash  =(PC+4)+imm
 	signal s_Br_adderout: std_logic_vector(31 downto 0); --Abhilash mux result between 0:(adder_out) and 1:((PC+4)+imm)
-
+	signal s_finalPC, s_JJal_Jr : std_logic_vector(31 downto 0);
+	signal s_PCsrc : std_logic;
 --regfile signals--
 	signal s_regdata1 : std_logic_vector(31 downto 0);
 	signal s_regdata2 : std_logic_vector(31 downto 0);
@@ -223,6 +227,9 @@ end component;
 
 --addition control mux signals--
 	signal s_lui_mux_out, s_lui_out : std_logic_vector(31 downto 0);
+--------------------------phase 2 stuff----------------------
+	signal s_RegDst_out : std_logic_vector(4 downto 0);
+	signal s_JALMuxout  : std_logic_vector(31 downto 0);
 
 begin
 
@@ -257,7 +264,7 @@ begin
 
 PC: pc_reg
 generic map( N => 32)
-port map(    data_in	=> adder_out,	--Abhilash added: change adder_out to whatever final signal happens to be (s_finalPC)
+port map(    data_in	=> s_finalPC,	--Abhilash added: change pcadder_out to whatever final signal happens to be (s_finalPC)
 	     reset_PC	=> iRST,
 	     wr_en_PC	=> '1',
 	     data_out	=> pc_out,
@@ -266,7 +273,7 @@ port map(    data_in	=> adder_out,	--Abhilash added: change adder_out to whateve
 pcadder : add4to32bits
 generic map( N => 32)
 port map(	in_32bits	=> pc_out,	     
-		o_4plus32bits	=> adder_out);
+		o_4plus32bits	=> pcadder_out);
 		--o_COUT		=> ;
 		
 ----Abhilash added:------------------------------------------------------
@@ -274,15 +281,15 @@ shft26	:  shift26
 port map(	i_A	=>	s_Inst(25 downto 0),
 			o_B	=>	shifted28);
 
-s_28PC4 <= pc_out(31 downto 28) & shifted28;
+s_28PC4 <= pc_out(31 downto 28) & shifted28; --Jump address
 
 jal_jr :	mux2_1dataflow
-port map (	i_S  => s_JSelect, --put s_JSelect in signal initialization. JSelect is a part of a control
+port map (	i_S  => s_JumpType, 
 			i_A  => s_28PC4,  --if mux's selector =0,choose s_28PC4
 			i_B  => s_regdata1,	--if mux's selector =1,choose s_regdata1
 			o_F  => s_JJal_Jr); -- put s_JJal_Jr in signal initialization. s_JJal_Jr is the output b/w jr and jal/jump addr
 			
-shiftBranch: shiftALL
+shiftBranch: shiftALL --shift left 2 for branch operations
 port map(	input_A => s_immi_extend,
 			shiftBy_Sel => "00010",
 			left_right_Sel => '0',
@@ -291,20 +298,20 @@ port map(	input_A => s_immi_extend,
 
 add_BranchAddr: ripple_adder
 port map(	i_Cin => '0',
-			i_B0  => s_shiftBranch,
-			i_B1  => adder_out,
+			i_B0  => pcadder_out,
+			i_B1  => s_shiftBranch, --the PC+4 adder's output**
 			o_Out => s_BranchPC); --including final carry out
 			--o_cout: out std_logic);
 
 PCsrcVal :  BEQvsBNE
 port map(i_beq     => s_Branch, 
-		 i_bne     => s_bne,	--put s_bne in signal initialization. s_bne is a part of a control signal
+		 i_bne     => s_Bne,	--put s_bne in signal initialization. s_bne is a part of a control signal
 		 i_zero	   => s_Zero,
 		 o_PCsrc   => s_PCsrc);	--put s_PCsrc in signal initialization. s_PCsrc is a part of a control signal
 
 PCsrcMUX :	mux2_1dataflow
 port map (	i_S  => s_PCsrc, --DONE: change s_Branch to (s_Branch).(Z) + (~Z).(Bne)
-			i_A  => adder_out,  --if mux's selector =0,choose adder_out
+			i_A  => pcadder_out,  --if mux's selector =0,choose pcadder_out (PC + 4)
 			i_B  => s_BranchPC,	--if mux's selector =1,choose s_BranchPC
 			o_F  => s_Br_adderout);
 
@@ -313,16 +320,22 @@ port map (	i_S  => s_Jump,
 			i_A  => s_Br_adderout,  --if mux's selector =0,choose s_Br_adderout
 			i_B  => s_JJal_Jr,	--if mux's selector =1,choose s_JJal_Jr
 			o_F  => s_finalPC);	--put s_finalPC in signal initialization. s_finalPC is the value that goes in PCreg
+			
+
 ---------------------------------------------------------------------------
 
-s_NextInstAddr <= pc_out;
+s_NextInstAddr <= pc_out; -- final result of PC after all the adding,shifting required
+
+
 ctrl: Control
 port map(	Opcode		=> s_Opcode,
 		Funct		=> s_Funct,
 		ShiftSrc	=> s_ShiftSrc,		
 		Lui		=> s_Lui,
 		Jump		=> s_Jump,
-		Branch		=> s_Branch, --not hooked to anything
+		JumpType	=> s_JumpType,
+		Branch		=> s_Branch,
+		Bne			=> s_Bne,
 		MemWrite	=> s_MemWrite,
 		MemRead		=> s_MemRead,
 		RegWrite	=> s_RegWrite,
@@ -340,6 +353,13 @@ generic map(N => 5)
 port map(	i_S	=> s_RegDst,
 		i_A	=> s_Inst(20 downto 16),
 		i_B	=> s_Inst(15 downto 11),
+		o_F	=> s_RegDst_out);
+		
+jal_mux : mux2_1dataflow  --selects between rt/rd and $31(for JAL insturction's write to reg $ra)
+generic map(N => 5)
+port map(i_S	=> s_Jump,
+		i_A	=> s_RegDst_out,
+		i_B	=> "11111",  --write to reg31
 		o_F	=> s_RegWrAddr);
 
 
@@ -394,6 +414,12 @@ port map(	i_S	=> s_MemtoReg,
 		i_A 	=> s_ALUOut,
 		i_B	=> s_DMemOut,
 		o_F	=> s_alu_mem_out);
+		
+JALwriteMux : mux2_1dataflow
+port map(	i_S	=> s_Jump,
+		i_A 	=> s_alu_mem_out,
+		i_B	=> pcadder_out,
+		o_F	=> s_JALMuxout);
 
 luishifter: lui_shifter
 port map(	i_A	=> s_Inst(15 downto 0),
@@ -401,7 +427,7 @@ port map(	i_A	=> s_Inst(15 downto 0),
 
 lui_mux : mux2_1dataflow
 port map(	i_S	=> s_Lui,
-		i_A	=> s_alu_mem_out,
+		i_A	=> s_JALMuxout,
 		i_B	=> s_lui_out,
 		o_F	=> s_lui_mux_out);
 
