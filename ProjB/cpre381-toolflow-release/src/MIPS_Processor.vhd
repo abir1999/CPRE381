@@ -88,6 +88,13 @@ port(	input_A : in std_logic_vector(N-1 downto 0);
 	     log_arith_Sel: in std_logic;
 	     out_Shift : out std_logic_vector(N-1 downto 0));
 end component;
+
+component BEQvsBNE
+port(  i_beq          : in std_logic;
+       i_bne          : in std_logic;
+       i_zero	      : in std_logic;
+       o_PCsrc        : out std_logic);
+end component;
 --------------------------------------------------
 
 component add4to32bits
@@ -250,7 +257,7 @@ begin
 
 PC: pc_reg
 generic map( N => 32)
-port map(    data_in	=> adder_out,	--Abhilash added: change adder_out to whatever final signal happens to be
+port map(    data_in	=> adder_out,	--Abhilash added: change adder_out to whatever final signal happens to be (s_finalPC)
 	     reset_PC	=> iRST,
 	     wr_en_PC	=> '1',
 	     data_out	=> pc_out,
@@ -269,6 +276,12 @@ port map(	i_A	=>	s_Inst(25 downto 0),
 
 s_28PC4 <= pc_out(31 downto 28) & shifted28;
 
+jal_jr :	mux2_1dataflow
+port map (	i_S  => s_JSelect, --put s_JSelect in signal initialization. JSelect is a part of a control
+			i_A  => s_28PC4,  --if mux's selector =0,choose s_28PC4
+			i_B  => s_regdata1,	--if mux's selector =1,choose s_regdata1
+			o_F  => s_JJal_Jr); -- put s_JJal_Jr in signal initialization. s_JJal_Jr is the output b/w jr and jal/jump addr
+			
 shiftBranch: shiftALL
 port map(	input_A => s_immi_extend,
 			shiftBy_Sel => "00010",
@@ -283,13 +296,23 @@ port map(	i_Cin => '0',
 			o_Out => s_BranchPC); --including final carry out
 			--o_cout: out std_logic);
 
+PCsrcVal :  BEQvsBNE
+port map(i_beq     => s_Branch, 
+		 i_bne     => s_bne,	--put s_bne in signal initialization. s_bne is a part of a control signal
+		 i_zero	   => s_Zero,
+		 o_PCsrc   => s_PCsrc);	--put s_PCsrc in signal initialization. s_PCsrc is a part of a control signal
 
 PCsrcMUX :	mux2_1dataflow
-port map (	i_S  => s_Branch, --change s_Branch to (s_Branch).(Z) + (~Z).(Bne)
+port map (	i_S  => s_PCsrc, --DONE: change s_Branch to (s_Branch).(Z) + (~Z).(Bne)
 			i_A  => adder_out,  --if mux's selector =0,choose adder_out
 			i_B  => s_BranchPC,	--if mux's selector =1,choose s_BranchPC
 			o_F  => s_Br_adderout);
-			
+
+finalPCmux: mux2_1dataflow
+port map (	i_S  => s_Jump, 	
+			i_A  => s_Br_adderout,  --if mux's selector =0,choose s_Br_adderout
+			i_B  => s_JJal_Jr,	--if mux's selector =1,choose s_JJal_Jr
+			o_F  => s_finalPC);	--put s_finalPC in signal initialization. s_finalPC is the value that goes in PCreg
 ---------------------------------------------------------------------------
 
 s_NextInstAddr <= pc_out;
