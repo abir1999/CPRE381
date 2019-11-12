@@ -59,7 +59,7 @@ begin
 
 	resetDATA: dff32bit
 	port map(i_CLK => clk,
-		 i_RST => reset_PC,
+		 i_RST => '0',
 		 i_WE  => s_we,
 		 i_D   => s_data,
 		 o_Q   => data_out);

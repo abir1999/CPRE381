@@ -5,7 +5,7 @@ entity Control is
 	
    port(	Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine instruction
 		Funct		: in std_logic_vector(5 downto 0);		-- Bits [5-0] of machine instruction
-		Branch			: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
+		Beq			: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
 		Bne			: out std_logic;
 		Jump		: out std_logic;
 		JumpType : out std_logic;
@@ -56,7 +56,7 @@ begin
 				'0';  --0 when J or JAL instrc
 						
 
-	Branch	<= '1' when (Opcode = "000100") or (Opcode = "000101") else '0';	--1 when either of the branch instrc, 0 otherwise.
+	Beq	<= '1' when (Opcode = "000100") else '0';	--1 when either of the branch instrc, 0 otherwise.
 	Bne		<= '1' when (Opcode = "000101") else '0'; -- zero when BEQ (or any other instrc), 1 when BNE
 
 	MemWrite	<= '1' when Opcode = "101011" else '0';
@@ -89,9 +89,7 @@ begin
 			   	     (Opcode = "001101") or
 				     (Opcode = "001010") or
 			   	     (Opcode = "001011") or
-				     (Opcode = "101011") or
-			   	     (Opcode = "000100") or
-				     (Opcode = "000101") else
+				     (Opcode = "101011") else
 			   	  '-' when (Opcode = "000010") or --phase 2 Jump,JAL,JR
 				     (Opcode = "000011") or
 					 (Opcode = "000000" and Funct = "001000") else '0';
