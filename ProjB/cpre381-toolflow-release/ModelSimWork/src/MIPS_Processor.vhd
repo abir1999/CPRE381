@@ -121,7 +121,7 @@ port(	Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine in
 		Bne			: out std_logic;						-- Branch Not Equals, to be anded with (not ALUZero)
 		Jump		: out std_logic;
 		JumpType	: out std_logic;
-		Branch		: out std_logic;
+		Beq			: out std_logic;
 		MemWrite	: out std_logic;
 		MemRead		: out std_logic;
 		RegWrite	: out std_logic;
@@ -191,7 +191,7 @@ end component;
 	signal s_Lui		: std_logic;
 	signal s_Jump		: std_logic;
 	signal s_JumpType	: std_logic;
-	signal s_Branch		: std_logic;
+	signal s_Beq		: std_logic;
 	signal s_Bne		:std_logic;
 	signal s_MemWrite	: std_logic;
 	signal s_MemRead	: std_logic;
@@ -304,13 +304,13 @@ port map(	i_Cin => '0',
 			--o_cout: out std_logic);
 
 PCsrcVal :  BEQvsBNE
-port map(i_beq     => s_Branch, 
+port map(i_beq     => s_Beq, 
 		 i_bne     => s_Bne,	--put s_bne in signal initialization. s_bne is a part of a control signal
 		 i_zero	   => s_Zero,
 		 o_PCsrc   => s_PCsrc);	--put s_PCsrc in signal initialization. s_PCsrc is a part of a control signal
 
 PCsrcMUX :	mux2_1dataflow
-port map (	i_S  => s_PCsrc, --DONE: change s_Branch to (s_Branch).(Z) + (~Z).(Bne)
+port map (	i_S  => s_PCsrc, --DONE: change s_Beq to (s_Branch).(Z) + (~Z).(Bne)
 			i_A  => pcadder_out,  --if mux's selector =0,choose pcadder_out (PC + 4)
 			i_B  => s_BranchPC,	--if mux's selector =1,choose s_BranchPC
 			o_F  => s_Br_adderout);
@@ -334,7 +334,7 @@ port map(	Opcode		=> s_Opcode,
 		Lui		=> s_Lui,
 		Jump		=> s_Jump,
 		JumpType	=> s_JumpType,
-		Branch		=> s_Branch,
+		Beq			=> s_Beq,
 		Bne			=> s_Bne,
 		MemWrite	=> s_MemWrite,
 		MemRead		=> s_MemRead,
