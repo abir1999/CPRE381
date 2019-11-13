@@ -130,7 +130,8 @@ port(	Opcode		: in std_logic_vector(31 downto 26);	-- Bits [31-26] of machine in
 		RegDst		: out std_logic;
 		ALUOpcode	: out std_logic_vector(5 downto 0);	-- Control signal for ALU
 		Lui			: out std_logic;
-		ShiftSrc	: out std_logic); --for v-type shifts or shamt from instruction
+		ShiftSrc	: out std_logic; --for v-type shifts or shamt from instruction
+		BoolImmi	: out std_logic);
 	
 end component;
 
@@ -200,6 +201,7 @@ end component;
 	signal s_ALUSrc		: std_logic;
 	signal s_RegDst		: std_logic;
 	signal s_ShiftSrc	: std_logic;
+	signal s_BoolImmi 	: std_logic;
 	signal s_ALUOpcode	: std_logic_vector(5 downto 0);
 
 --PC signals--
@@ -330,7 +332,8 @@ s_NextInstAddr <= pc_out; -- final result of PC after all the adding,shifting re
 ctrl: Control
 port map(	Opcode		=> s_Opcode,
 		Funct		=> s_Funct,
-		ShiftSrc	=> s_ShiftSrc,		
+		ShiftSrc	=> s_ShiftSrc,
+		BoolImmi	=> s_BoolImmi,
 		Lui		=> s_Lui,
 		Jump		=> s_Jump,
 		JumpType	=> s_JumpType,
@@ -378,7 +381,7 @@ port map(	i_CLK        => iCLK,
 immi_extend : extender
 port map(	input  => s_Inst(15 downto 0),
 		output => s_immi_extend,
-		sign   => '1');
+		sign   => s_BoolImmi);
 
 ALUsrc_mux : mux2_1dataflow
 port map(	i_S	=> s_ALUSrc,
