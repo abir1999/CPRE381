@@ -45,7 +45,6 @@ begin
 			   '-' when (Opcode = "101011") or
 			       	    (Opcode = "000100") or
 			            (Opcode = "000101") or
-			            (Opcode = "101011") or
 			            (Opcode = "000010") or
 			            (Opcode = "000011") or
 				    (Opcode = "000000" and Funct = "001000") 
@@ -78,7 +77,7 @@ begin
 				   else '1';
 
 	MemtoReg	<= '1' when (Opcode = "100011") else
-			    '-' when (Opcode = "101011") or						-- Sw (dont care for any of the below instrcs)
+			    '-' when (Opcode = "101011") or						-- Sw (dont care)
 				     (Opcode = "000100") or							-- Beq
 				     (Opcode = "000101") or							-- Bne
 				     (Opcode = "000010") or 						-- J
