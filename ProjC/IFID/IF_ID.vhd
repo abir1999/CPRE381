@@ -5,9 +5,9 @@ entity IF_ID is
 	generic(N	: integer :=32);
 	port(flush	: in std_logic;			--When flush is 1, all write_en should be 0
 	     stall	: in std_logic;			--When stall is 1, all write_en should be 0
-	     data32in	: in std_logic_vector(N-1 downto 0);
-	     PCreg_in	: in std_logic_vector(N-1 downto 0);
-	     data32out	: out std_logic_vector(N-1 downto 0);
+	     data32in	: in std_logic_vector(N-1 downto 0); --32bit instruction
+	     PCreg_in	: in std_logic_vector(N-1 downto 0); --input for PC+4
+	     data32out	: out std_logic_vector(N-1 downto 0); --when flush is 1, it outputs zero so it works like a NO-OP
 	     PCreg_out	: out std_logic_vector(N-1 downto 0);
 	     clk	: in std_logic);
 end IF_ID;
