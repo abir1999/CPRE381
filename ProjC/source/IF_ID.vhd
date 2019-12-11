@@ -5,7 +5,8 @@ entity IF_ID is
 	generic(N	: integer :=32);
 	port(flush	: in std_logic;			--When flush is 1, all write_en should be 0
 	     stall	: in std_logic;			--When stall is 1, all write_en should be 0
-	     data32in	: in std_logic_vector(N-1 downto 0);
+	     reset	: in std_logic;
+		 data32in	: in std_logic_vector(N-1 downto 0);
 	     PCreg_in	: in std_logic_vector(N-1 downto 0);
 	     data32out	: out std_logic_vector(N-1 downto 0);
 	     PCreg_out	: out std_logic_vector(N-1 downto 0);
@@ -56,7 +57,7 @@ end component;
 
 signal s_we : std_logic;	--write enable should be 0 while stalling  
 signal s_data: std_logic_vector(N-1 downto 0);  
-
+signal s_flushreset : std_logic;
 
 begin
 
@@ -64,15 +65,21 @@ begin
 	port map(i_A  => stall,
                  o_F  => s_we);
 
+	flushORreset : org2
+	port map(i_A => flush,
+			i_B => reset,
+			o_F => s_flushreset);
+
+
 	flushDATA: dff32_pipe
 	port map(i_CLK => clk,
-		 i_RST => flush,
+		 i_RST => s_flushreset,
 		 i_WE  => s_we,
 		 i_D   => data32in,
 		 o_Q   => data32out);
 	storePC: dff32_pipe
 	port map(i_CLK => clk,
-		 i_RST => '0',
+		 i_RST => s_flushreset,
 		 i_WE  => s_we,
 		 i_D   => PCreg_in,
 		 o_Q   => PCreg_out);

@@ -241,7 +241,8 @@ component IF_ID
 generic( N: integer:=32);
 port(	flush	: in std_logic;			--When flush is 1, all write_en should be 0
 	     stall	: in std_logic;			--When stall is 1, all write_en should be 0
-	     data32in	: in std_logic_vector(N-1 downto 0); --32bit instruction
+	     reset	: in std_logic;
+		 data32in	: in std_logic_vector(N-1 downto 0); --32bit instruction
 	     PCreg_in	: in std_logic_vector(N-1 downto 0); --input for PC+4
 	     data32out	: out std_logic_vector(N-1 downto 0); --when flush is 1, it outputs zero so it works like a NO-OP
 	     PCreg_out	: out std_logic_vector(N-1 downto 0);
@@ -504,6 +505,7 @@ IF_IDpipe : IF_ID
 port map(
 		 flush	=> '0',
 	     stall	=> '0',
+		 reset	=> iRST,
 	     data32in	=> s_Inst, -- the instruction
 	     PCreg_in	=> pcadder_out, --the PC+4 value from IF stage
 	     data32out	=> InstrOutID,
@@ -589,7 +591,7 @@ port map(	Opcode		=> s_Opcode,
 
 s_Opcode <= InstrOutID(31 downto 26);
 s_Funct	 <= InstrOutID(5 downto 0);
-s_RegWr  <= s_RegWrite; -- change this to the WB stage regwrite signal
+s_RegWr  <= o_RegWriteWB; -- change this to the WB stage regwrite signal
 
 regdst_mux : mux2_1dataflow -- wire from WB stage
 generic map(N => 5)
@@ -611,20 +613,20 @@ port map(	i_CLK        => iCLK,
       		i_RST        => iRST,
       		i_WE         => s_RegWr,
        		i_Waddr      => s_RegWrAddr,
-       		i_Raddr1     => s_Inst(25 downto 21),
-       		i_Raddr2     => s_Inst(20 downto 16),
+       		i_Raddr1     => InstrOutID(25 downto 21),
+       		i_Raddr2     => InstrOutID(20 downto 16),
        		i_Din        => s_RegWrData,
        		o_Qout1      => s_regdata1,
 			o_Qout2      => s_regdata2,
 			register2    => s_register2);
 
 immi_extend : extender
-port map(	input  => s_Inst(15 downto 0),
+port map(	input  => InstrOutID(15 downto 0),
 		output => s_immi_extend,
 		sign   => s_BoolImmi);
 		
 luishifter: lui_shifter
-port map(	i_A	=> s_Inst(15 downto 0),
+port map(	i_A	=> InstrOutID(15 downto 0),
 		o_B	=> s_lui_out);
 
 --ID/EX PIPELINE GOES HERE  just after the regfile
