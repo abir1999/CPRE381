@@ -1,0 +1,88 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit
+Efwd_compare
+Z1 w1576037970
+Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z3 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+R0
+Z4 8//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare.vhd
+Z5 F//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare.vhd
+l0
+L4
+V>RFC3m7B^^QXkOhGW=Ol01
+!s100 S_Tk<FRUzcK0U`_0:HCiN1
+Z6 OP;C;10.7b;67
+32
+Z7 !s110 1576037979
+!i10b 1
+Z8 !s108 1576037979.000000
+Z9 !s90 -reportprogress|300|-work|work|//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare.vhd|
+Z10 !s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare.vhd|
+!i113 1
+Z11 o-work work
+Z12 tExplicit 1 CvgOpt 0
+Adataflow
+R2
+R3
+DEx4 work 11 fwd_compare 0 22 >RFC3m7B^^QXkOhGW=Ol01
+l15
+L12
+Vz38>AUNP2DRbaQn0iU?Bc1
+!s100 HCS_ZnKVm?_z@h7[;ocGS0
+R6
+32
+R7
+!i10b 1
+R8
+R9
+R10
+!i113 1
+R11
+R12
+Efwd_compare5
+Z13 w1576037648
+R2
+R3
+R0
+Z14 8//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd
+Z15 F//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd
+l0
+L4
+VGg=0HmR:i<YZQNoYgPQ<i0
+!s100 kJMzd]d]GP>6LzMSK=;Y30
+R6
+32
+R7
+!i10b 1
+R8
+Z16 !s90 -reportprogress|300|-work|work|//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
+!s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
+!i113 1
+R11
+R12
+Adataflow
+R2
+R3
+DEx4 work 12 fwd_compare5 0 22 Gg=0HmR:i<YZQNoYgPQ<i0
+l16
+L12
+VM:Sggm_m8QXGDGNGKAYCi2
+!s100 SB0WkH@`gWHj;SD[53gG>3
+R6
+32
+R7
+!i10b 1
+R8
+R16
+Z17 !s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
+!i113 1
+R11
+R12
