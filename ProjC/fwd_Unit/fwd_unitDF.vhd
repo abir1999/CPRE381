@@ -38,6 +38,8 @@ begin
 		else fwd_outB<="00";
 		end if;
 		
+		if (MEM_rd="00000") then fwd_outA<="00";
+		if (WB_rd="00000") then fwd_outB<="00";
 		if(in_ID_rs = in_MEMRegAddr) then fwd_branchA <= '1';	
 		elsif (in_ID_rt = in_MEMRegAddr) then fwd_branchB <= '1';
 		else 
