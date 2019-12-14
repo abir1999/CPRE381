@@ -64,7 +64,7 @@ R7
 !i10b 1
 R8
 Z16 !s90 -reportprogress|300|-work|work|//my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
-!s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
+Z17 !s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
 !i113 1
 R11
 R12
@@ -82,7 +82,46 @@ R7
 !i10b 1
 R8
 R16
-Z17 !s107 //my.files.iastate.edu/Users/abhi99/Desktop/Project-CWork/fwd_Unit/fwd_compare5.vhd|
+R17
+!i113 1
+R11
+R12
+Ehzd_detect
+Z18 w1576293008
+R2
+R3
+Z19 dU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit
+Z20 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+Z21 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+l0
+L4
+VUNWW99NDZ?Ehg[;[<AMOL2
+!s100 IXi[Qc3g1k;k:l9>CbJ;m2
+R6
+32
+Z22 !s110 1576293012
+!i10b 1
+Z23 !s108 1576293011.000000
+Z24 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+Z25 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+!i113 1
+R11
+R12
+Adataflow
+R2
+R3
+Z26 DEx4 work 10 hzd_detect 0 22 UNWW99NDZ?Ehg[;[<AMOL2
+l22
+L20
+Vc?M];R0J`>fB[lfH[kHPD3
+!s100 YW72m;>KBiHWazaMQLA[53
+R6
+32
+R22
+!i10b 1
+R23
+R24
+R25
 !i113 1
 R11
 R12

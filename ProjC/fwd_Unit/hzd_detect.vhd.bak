@@ -22,13 +22,15 @@ architecture dataflow of hzd_detect is
 begin
 	process(in_EXregAddr, EX_memRead, in_ID_rs, in_ID_rt, in_PCsrc, in_Jump)
 	begin
-	if (EX_memRead='1') and ((in_EXregAddr=in_ID_rs) or (in_EXregAddr=in_ID_rt)) then		
-		IFID_flush <='0';
-		IFID_stall <='1';
-		IDEX_flush <='1';
-		IDEX_stall <='0';
-		PC_stall   <='1';
-				
+	if (EX_memRead='1') and ((in_EXregAddr=in_ID_rs) or (in_EXregAddr=in_ID_rt)) then
+		
+			IFID_flush <='0';
+			IFID_stall <='1';
+			IDEX_flush <='1';
+			IDEX_stall <='0';
+			PC_stall   <='1';
+		
+		
 	elsif (in_PCsrc ='1') or (in_Jump ='1') then
 		IFID_flush <='1';
 		IFID_stall <='0';
