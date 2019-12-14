@@ -17,7 +17,8 @@ entity Control is
 		RegDst		: out std_logic;
 		ALUOpcode	: out std_logic_vector(5 downto 0);	-- Control signal for ALU
 		Lui		: out std_logic;
-		ShiftSrc	: out std_logic); --for v-type shifts or shamt from instruction
+		ShiftSrc	: out std_logic; --for v-type shifts or shamt from instruction
+		BoolImmi	: out std_logic);  -- for boolean immidiate type instructions we want to zero extend the immidiate not sign extend.
 	
 end Control;
 
@@ -33,13 +34,17 @@ begin
 					(Opcode = "000000" and Funct = "000111") else
 			   '0';
 
+	BoolImmi <= '0' when (Opcode = "001100") or
+						(Opcode = "001110") or
+						(Opcode = "001101") else
+				'1' ; -- sign extend for all other immidiate types
+						
 	
 -- regDst is 1 in R-type, when opcode is 000000
 	RegDst		<= '1' when (Opcode = "000000") else
 			   '-' when (Opcode = "101011") or
 			       	    (Opcode = "000100") or
 			            (Opcode = "000101") or
-			            (Opcode = "101011") or
 			            (Opcode = "000010") or
 			            (Opcode = "000011") or
 				    (Opcode = "000000" and Funct = "001000") 
@@ -72,7 +77,7 @@ begin
 				   else '1';
 
 	MemtoReg	<= '1' when (Opcode = "100011") else
-			    '-' when (Opcode = "101011") or						-- Sw (dont care for any of the below instrcs)
+			    '-' when (Opcode = "101011") or						-- Sw (dont care)
 				     (Opcode = "000100") or							-- Beq
 				     (Opcode = "000101") or							-- Bne
 				     (Opcode = "000010") or 						-- J

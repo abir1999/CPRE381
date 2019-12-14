@@ -7,7 +7,6 @@
 
 # code/instruction section
 .text
-
 addi  $1,  $0,  1 		# Place “1” in $1
 addi  $2,  $0,  2		# Place “2” in $2
 addi  $3,  $0,  3		# Place “3” in $3
@@ -20,7 +19,4 @@ addi  $9,  $0,  9		# Place “9” in $9
 addi  $10, $0,  10		# Place “10” in $10
 
 addi  $2,  $0,  10              # Place "10" in $v0 to signal an "exit" or "halt"
-nop
-nop
-nop
 syscall                         # Actually cause the halt

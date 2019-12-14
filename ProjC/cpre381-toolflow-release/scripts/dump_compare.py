@@ -71,7 +71,7 @@ class MarsReader:
 	Wraps a mars dump file object so that we can separate the skipping logic from the comparison logic
 	'''
 	# instructions to ignore in the 'instr' group of mars_firstline_re
-	ignored = ['syscall','jr ','j ','beq ','bne ']
+	ignored = ['syscall','jr ','j ','beq ','bne ','nop']
 	nop_re = re.compile(r'Register Write to Reg: 0x00.*')
 
 	def __init__(self,path):
