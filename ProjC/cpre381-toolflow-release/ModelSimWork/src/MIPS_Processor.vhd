@@ -804,7 +804,7 @@ fwd_ALU_B : mux3to1Nbit
 port map(i_In0	=>s_ALUSrc_mux,
 	     i_In1	=>s_JALMuxout, --ALU/MEM/LUI/Jump(pc+4) data from WB stage
 		 i_In2  =>s_MEM_ALUorLUI,
-	     i_Sel	=> s_fwd_outA,
+	     i_Sel	=> s_fwd_outB,
 	     o_out	=> s_fwdALU_B);
 
 mainALU : big_alu

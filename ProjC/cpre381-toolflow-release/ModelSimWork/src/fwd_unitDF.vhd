@@ -44,10 +44,10 @@ begin
 		end if;
 		
 		if(in_ID_rs = in_WBRegAddr) then fwd_branchA <= '1';	
-		elsif (in_ID_rt = in_WBRegAddr) then fwd_branchB <= '1';
-		else 
-		fwd_branchA <='0';
-		fwd_branchB <= '0';
+		else fwd_branchA <='0';
+		end if;
+		if (in_ID_rt = in_WBRegAddr) then fwd_branchB <= '1';
+		else fwd_branchB <= '0';
 		end if;
 	end process;
 	
