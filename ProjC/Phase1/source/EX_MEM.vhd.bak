@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 --Jump and Branch address is calculated within ID stage, this requirement needs to be changed for Proj part B implementation.
-entity EX_MEM is
+entity ID_EX is
 	port(flush	: in std_logic;			--When flush is 1, all write_en should be 0
 	     stall	: in std_logic;			--When stall is 1, all write_en should be 0
 		 clk	: in std_logic;
@@ -35,9 +35,6 @@ entity EX_MEM is
 		i_Rd		: in std_logic_vector(4 downto 0);		-- Rd output from ID
 		o_Rd		: out std_logic_vector(4 downto 0);		-- Rd output for EXE
 		
-		i_FinalRegAddr : in std_logic_vector(4 downto 0); 
-		o_FinalRegAddr : out std_logic_vector(4 downto 0);
-		
 		i_32LUI		: in std_logic_vector(31 downto 0);		-- Output of Lui immediate mux from ID
 		o_32LUI		: out std_logic_vector(31 downto 0);	-- Output of Lui immediate mux for EXE
 		
@@ -45,10 +42,6 @@ entity EX_MEM is
 		o_Register2	: out std_logic_vector(31 downto 0);	-- Output of Register2 for EXE, used to halt program
 		
 		-- Later control signals --
-		
-		i_Jump		: in std_logic;		--jump control input from Ex pipeline
-		o_Jump		: out std_logic;	--jump control for Mem pipeline
-		
 		i_Lui		: in std_logic;		-- Lui output from Control from ID
 		o_Lui		: out std_logic;	-- Lui output from Control for EXE
 			
@@ -64,8 +57,8 @@ entity EX_MEM is
 		i_MemToReg	: in std_logic;		-- MemToReg output from Control from EXE
 		o_MemToReg	: out std_logic);	-- MemToReg output from Control for MEM
 	    
-end EX_MEM;
-architecture structure of EX_MEM is
+end ID_EX;
+architecture structure of ID_EX is
 
                
   --OR gate component
@@ -172,14 +165,6 @@ begin
 		 i_D   => i_Rd,
 		 o_Q   => o_Rd);
 	
-	finalAddr: dff32_pipe
-	generic map(N => 5)
-	port map(i_CLK => clk,
-		 i_RST => s_flushreset,
-		 i_WE  => s_we,
-		 i_D   => i_FinalRegAddr,
-		 o_Q   => o_FinalRegAddr);
-	
 	LUI32bit: dff32_pipe
 	generic map(N => 32)
 	port map(i_CLK => clk,
@@ -195,13 +180,13 @@ begin
 		 i_D   => i_Lui,
 		 o_Q   => o_Lui);
 	
-	Jump: dff_pipe
+		 
+	ShiftSrc: dff_pipe
 	port map(i_CLK => clk,
 		 i_RST => s_flushreset,
 		 i_WE  => s_we,
-		 i_D   => i_Jump,
-		 o_Q   => o_Jump);
-		
+		 i_D   => i_ShiftSrc,
+		 o_Q   => o_ShiftSrc);
 		 
 	MemWrite: dff_pipe
 	port map(i_CLK => clk,
