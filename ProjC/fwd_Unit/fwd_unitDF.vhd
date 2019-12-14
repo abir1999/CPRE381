@@ -7,7 +7,7 @@ entity fwd_unit is
 		MEM_regWr : in std_logic;
 		WB_regWr  : in std_logic;
 		in_MEMregAddr : in std_logic_vector (4 downto 0);
-		in_MEM_rs : in std_logic_vector (4 downto 0);
+		in_MEM_rt : in std_logic_vector (4 downto 0);
 		in_EX_rs  : in std_logic_vector (4 downto 0);	--(EX.rs)
 		in_EX_rt  : in std_logic_vector (4 downto 0);   --(EX.rt)
 		in_ID_rs  : in std_logic_vector(4 downto 0);
@@ -24,7 +24,7 @@ end fwd_unit;
 architecture dataflow of fwd_unit is
 
 begin
-	process(in_MEMregAddr, in_WBregAddr, MEM_regWr, WB_regWr, in_EX_rs, in_EX_rt)
+	process(in_MEMregAddr, in_WBregAddr, MEM_regWr, WB_regWr, in_EX_rs, in_EX_rt,in_ID_rs, in_ID_rt, in_MEM_rs)
 	begin
 		if    (MEM_regWr='1') and (WB_regWr='0') then
 			if(in_MEMregAddr=in_EX_rs) then fwd_EX_A<="10";
@@ -66,7 +66,7 @@ begin
 			fwd_ID_B<="00";
 		end if;
 		
-		if (WB_regWr='1') and (in_WBregAddr=in_MEM_rs)	then fwd_Mem <= '1';
+		if (WB_regWr='1') and (in_WBregAddr=in_MEM_rt)	then fwd_Mem <= '1';
 		else fwd_Mem <='0';
 		end if;
 		
