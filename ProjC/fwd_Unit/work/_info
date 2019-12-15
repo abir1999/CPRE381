@@ -86,42 +86,140 @@ R17
 !i113 1
 R11
 R12
-Ehzd_detect
-Z18 w1576293008
+Efwd_unit
+w1576365725
 R2
 R3
-Z19 dU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit
-Z20 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
-Z21 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+Z18 dU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit
+Z19 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/fwd_unitDF.vhd
+Z20 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/fwd_unitDF.vhd
 l0
 L4
-VUNWW99NDZ?Ehg[;[<AMOL2
-!s100 IXi[Qc3g1k;k:l9>CbJ;m2
+VHfnh@2Jm_S[<73jRmGPMR1
+!s100 `BlA:mnn<oKFHPZ1Fa3j92
 R6
 32
-Z22 !s110 1576293012
+!s110 1576365804
 !i10b 1
-Z23 !s108 1576293011.000000
-Z24 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
-Z25 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+!s108 1576365804.000000
+Z21 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/fwd_unitDF.vhd|
+Z22 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/fwd_unitDF.vhd|
+!i113 1
+R11
+R12
+Adataflow
+w1576366183
+R2
+R3
+DEx4 work 8 fwd_unit 0 22 Hfnh@2Jm_S[<73jRmGPMR1
+l26
+L24
+V=`eIo4CjGVG=I?3XbEB?h0
+!s100 1CSm[6:E<9J9M7IAlVj9>3
+R6
+32
+!s110 1576366187
+!i10b 1
+!s108 1576366187.000000
+R21
+R22
+!i113 1
+R11
+R12
+Efwd_unitdf
+Z23 w1576370651
+R2
+R3
+R18
+R19
+R20
+l0
+L4
+VJiIFQ_4MF5TdkHSW5^ig83
+!s100 T8<X`cb]C>7n3mmZLi`5j3
+R6
+32
+Z24 !s110 1576370657
+!i10b 1
+Z25 !s108 1576370656.000000
+R21
+R22
+!i113 1
+R11
+R12
+Abehavior
+R2
+R3
+Z26 DEx4 work 10 fwd_unitdf 0 22 JiIFQ_4MF5TdkHSW5^ig83
+l26
+L24
+VkzN6C5YP_JM@29=zHS5jz3
+!s100 9]PLI@BkK`D^l1SX@^Y1K1
+R6
+32
+R24
+!i10b 1
+R25
+R21
+R22
 !i113 1
 R11
 R12
 Adataflow
 R2
 R3
-Z26 DEx4 work 10 hzd_detect 0 22 UNWW99NDZ?Ehg[;[<AMOL2
+R26
+l26
+L24
+V[9^3fR6LFcEngC^4eRGSn2
+!s100 a_OcJFfB9WzH9ffjFJEdD2
+R6
+32
+!s110 1576369211
+!i10b 1
+!s108 1576369211.000000
+R21
+R22
+!i113 1
+R11
+R12
+w1576368602
+Ehzd_detect
+Z27 w1576293008
+R2
+R3
+R18
+Z28 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+Z29 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+l0
+L4
+VUNWW99NDZ?Ehg[;[<AMOL2
+!s100 IXi[Qc3g1k;k:l9>CbJ;m2
+R6
+32
+Z30 !s110 1576365789
+!i10b 1
+Z31 !s108 1576365789.000000
+Z32 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+Z33 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+!i113 1
+R11
+R12
+Adataflow
+R2
+R3
+DEx4 work 10 hzd_detect 0 22 UNWW99NDZ?Ehg[;[<AMOL2
 l22
 L20
 Vc?M];R0J`>fB[lfH[kHPD3
 !s100 YW72m;>KBiHWazaMQLA[53
 R6
 32
-R22
+R30
 !i10b 1
-R23
-R24
-R25
+R31
+R32
+R33
 !i113 1
 R11
 R12
