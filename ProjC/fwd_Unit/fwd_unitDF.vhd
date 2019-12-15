@@ -75,16 +75,16 @@ begin
 			end if;
 		elsif (MEM_regWr='1') and (WB_regWr='1') then 
 
-			if (in_MEMregAddr=in_EX_rs) and (in_WBregAddr/=in_EX_rs)  then fwd_EX_B<="10";
-			elsif (in_MEMregAddr/=in_EX_rs) and (in_WBregAddr=in_EX_rs)  then fwd_EX_B<="01";
-			elsif (in_MEMregAddr=in_EX_rs) and (in_WBregAddr=in_EX_rs)  then fwd_EX_B<="10";
+			if (in_MEMregAddr=in_EX_rt) and (in_WBregAddr/=in_EX_rt)  then fwd_EX_B<="10";
+			elsif (in_MEMregAddr/=in_EX_rt) and (in_WBregAddr=in_EX_rt)  then fwd_EX_B<="01";
+			elsif (in_MEMregAddr=in_EX_rt) and (in_WBregAddr=in_EX_rt)  then fwd_EX_B<="10";
 			else fwd_EX_B<="00";
 			end if;
 			
 			
-			if (in_MEMregAddr=in_ID_rs) and (in_WBregAddr/=in_ID_rs)  then fwd_ID_B<="10";
-			elsif (in_MEMregAddr/=in_ID_rs) and (in_WBregAddr=in_ID_rs)  then fwd_ID_B<="01";
-			elsif (in_MEMregAddr=in_ID_rs) and (in_WBregAddr=in_ID_rs)  then fwd_ID_B<="10";
+			if (in_MEMregAddr=in_ID_rt) and (in_WBregAddr/=in_ID_rt)  then fwd_ID_B<="10";
+			elsif (in_MEMregAddr/=in_ID_rt) and (in_WBregAddr=in_ID_rt)  then fwd_ID_B<="01";
+			elsif (in_MEMregAddr=in_ID_rt) and (in_WBregAddr=in_ID_rt)  then fwd_ID_B<="10";
 			else fwd_ID_B<="00";
 			end if;
 		else 

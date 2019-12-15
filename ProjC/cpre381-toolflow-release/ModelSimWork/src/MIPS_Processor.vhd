@@ -252,22 +252,27 @@ end component;
 
 component fwd_unitDF
 port(	
-		in_WBRegAddr  : in std_logic_vector (4 downto 0);
+		in_WBregAddr  : in std_logic_vector (4 downto 0);
 		MEM_regWr : in std_logic;
 		WB_regWr  : in std_logic;
-		in_MEMRegAddr : in std_logic_vector (4 downto 0);
+		in_MEMregAddr : in std_logic_vector (4 downto 0);
+		in_MEM_rt : in std_logic_vector (4 downto 0);
 		in_EX_rs  : in std_logic_vector (4 downto 0);	--(EX.rs)
 		in_EX_rt  : in std_logic_vector (4 downto 0);   --(EX.rt)
 		in_ID_rs  : in std_logic_vector(4 downto 0);
 		in_ID_rt  : in std_logic_vector(4 downto 0);
-		fwd_outA  : out std_logic_vector (1 downto 0);	--1stmux (ALU in A)
-		fwd_outB  : out std_logic_vector (1 downto 0);	--2ndmux (ALU in B)
+		fwd_EX_A  : out std_logic_vector (1 downto 0);	--1stmux (ALU in A)
+		fwd_EX_B  : out std_logic_vector (1 downto 0);	--2ndmux (ALU in B)
+		fwd_ID_A  : out std_logic_vector (1 downto 0);	--forwarding to ID stage to the rs data mux
+		fwd_ID_B  : out std_logic_vector (1 downto 0);	--forwarding to ID stage to the rt data mux
+		fwd_Mem	  : out std_logic;  
 		fwd_branchA : out std_logic;
 		fwd_branchB : out std_logic);
 end component;
 
-signal s_fwd_outA,s_fwd_outB : std_logic_vector(1 downto 0);
-signal s_fwd_branchA,s_fwd_branchB : std_logic;
+signal s_fwd_EX_A,s_fwd_EX_B,s_fwd_ID_A, s_fwd_ID_B : std_logic_vector(1 downto 0);
+signal s_fwd_branchA,s_fwd_branchB, s_fwd_Mem : std_logic;
+signal s_fwdData1,s_fwdData2,s_dataMem : std_logic_vector (31 downto 0);
 
 component hzd_detect
 port(	in_EXregAddr : in std_logic_vector (4 downto 0);
@@ -560,12 +565,16 @@ port map(
 		MEM_regWr => o_RegWriteMEM,
 		WB_regWr  => o_RegWriteWB,
 		in_MEMRegAddr => o_FinalRegAddrMEM,
+		in_MEM_rt => o_RtMEM,
 		in_EX_rs  => o_RsEX,
 		in_EX_rt => o_RtEX,
 		in_ID_rs  => InstrOutID(25 downto 21),
 		in_ID_rt  => InstrOutID(20 downto 16),
-		fwd_outA  => s_fwd_outA,
-		fwd_outB  => s_fwd_outB,
+		fwd_EX_A  =>s_fwd_EX_A,
+		fwd_EX_B  => s_fwd_EX_B,
+		fwd_ID_A  => s_fwd_ID_A,
+		fwd_ID_B  => s_fwd_ID_B,
+		fwd_Mem   => s_fwd_Mem,
 		fwd_branchA => s_fwd_branchA,
 		fwd_branchB => s_fwd_branchB);
 
@@ -694,6 +703,22 @@ port map(	i_CLK        => iCLK,
        		o_Qout1      => s_regdata1,
 			o_Qout2      => s_regdata2,
 			register2    => s_register2);
+			
+			
+fwd_regdata1 : mux3to1Nbit
+port map(i_In0	=>s_regdata1,
+	     i_In1	=>s_JALMuxout, --ALU/MEM/LUI/Jump(pc+4) data from WB stage
+		 i_In2  =>s_MEM_ALUorLUI,
+	     i_Sel	=> s_fwd_ID_A,
+	     o_out	=>s_fwdData1);
+		 
+fwd_regdata2 : mux3to1Nbit
+port map(i_In0	=>s_regdata2,
+	     i_In1	=>s_JALMuxout, --ALU/MEM/LUI/Jump(pc+4) data from WB stage
+		 i_In2  =>s_MEM_ALUorLUI,
+	     i_Sel	=> s_fwd_ID_B,
+	     o_out	=>s_fwdData2);
+
 
 immi_extend : extender
 port map(	input  => InstrOutID(15 downto 0),
@@ -726,10 +751,10 @@ port map(flush => '0',
 		i_Instr	=> InstrOutID,
 		o_Instr	=> o_InstrEX,
 		
-		i_RData1 => s_regdata1,
+		i_RData1 => s_fwdData1,
 		o_RData1 => o_RData1EX,
 		
-		i_RData2 => s_regdata2,
+		i_RData2 => s_fwdData2,
 		o_RData2 => o_RData2EX,
 	   
 		i_ImmiExt =>s_immi_extend,
@@ -797,14 +822,14 @@ fwd_ALU_A : mux3to1Nbit
 port map(i_In0	=>o_RData1EX,
 	     i_In1	=>s_JALMuxout, --ALU/MEM/LUI/Jump(pc+4) data from WB stage
 		 i_In2  =>s_MEM_ALUorLUI,
-	     i_Sel	=> s_fwd_outA,
+	     i_Sel	=> s_fwd_EX_A,
 	     o_out	=>s_fwdALU_A);
 		 
 fwd_ALU_B : mux3to1Nbit
 port map(i_In0	=>s_ALUSrc_mux,
 	     i_In1	=>s_JALMuxout, --ALU/MEM/LUI/Jump(pc+4) data from WB stage
 		 i_In2  =>s_MEM_ALUorLUI,
-	     i_Sel	=> s_fwd_outB,
+	     i_Sel	=> s_fwd_EX_B,
 	     o_out	=> s_fwdALU_B);
 
 mainALU : big_alu
@@ -884,9 +909,17 @@ port map(
 		o_MemToReg	=> o_MemToRegMEM);
 	
 --at mem stage pipeline
-s_DMemWr	<= o_MemWriteMEM; --from Control unit
+s_DMemWr	<= o_MemWriteMEM; --from control uuit
 s_DMemAddr	<= o_ALUOutMEM; --address from ALU output
-s_DMemData	<= o_RData2MEM;  --write data to mem from regfile read data 2
+s_DMemData	<= s_dataMem;  --write data to mem from regfile read data 2
+
+
+fwd_MEM : mux2_1dataflow
+port map(
+		i_S => s_fwd_Mem,
+		i_A => o_RData2MEM,
+		i_B => s_JALMuxout,
+		o_F => s_dataMem);
 	
   DMem: mem
     generic map(ADDR_WIDTH => 10,

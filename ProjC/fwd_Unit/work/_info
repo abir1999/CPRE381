@@ -127,7 +127,7 @@ R22
 R11
 R12
 Efwd_unitdf
-Z23 w1576370651
+Z23 w1576371992
 R2
 R3
 R18
@@ -139,9 +139,9 @@ VJiIFQ_4MF5TdkHSW5^ig83
 !s100 T8<X`cb]C>7n3mmZLi`5j3
 R6
 32
-Z24 !s110 1576370657
+Z24 !s110 1576372118
 !i10b 1
-Z25 !s108 1576370656.000000
+Z25 !s108 1576372118.000000
 R21
 R22
 !i113 1
@@ -153,8 +153,8 @@ R3
 Z26 DEx4 work 10 fwd_unitdf 0 22 JiIFQ_4MF5TdkHSW5^ig83
 l26
 L24
-VkzN6C5YP_JM@29=zHS5jz3
-!s100 9]PLI@BkK`D^l1SX@^Y1K1
+Z27 VX<_^2BbL[jP4o8UX5cT?;1
+Z28 !s100 ihI_>jm6EiJ=aH?Pk>mPI0
 R6
 32
 R24
@@ -185,23 +185,23 @@ R11
 R12
 w1576368602
 Ehzd_detect
-Z27 w1576293008
+Z29 w1576293008
 R2
 R3
 R18
-Z28 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
-Z29 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+Z30 8U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
+Z31 FU:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd
 l0
 L4
 VUNWW99NDZ?Ehg[;[<AMOL2
 !s100 IXi[Qc3g1k;k:l9>CbJ;m2
 R6
 32
-Z30 !s110 1576365789
+Z32 !s110 1576365789
 !i10b 1
-Z31 !s108 1576365789.000000
-Z32 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
-Z33 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+Z33 !s108 1576365789.000000
+Z34 !s90 -reportprogress|300|-work|work|U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
+Z35 !s107 U:/CPRE381/GitHub381/CPRE381/ProjC/fwd_Unit/hzd_detect.vhd|
 !i113 1
 R11
 R12
@@ -215,11 +215,11 @@ Vc?M];R0J`>fB[lfH[kHPD3
 !s100 YW72m;>KBiHWazaMQLA[53
 R6
 32
-R30
-!i10b 1
-R31
 R32
+!i10b 1
 R33
+R34
+R35
 !i113 1
 R11
 R12
