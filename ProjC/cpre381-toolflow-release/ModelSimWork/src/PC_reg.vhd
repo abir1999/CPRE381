@@ -5,7 +5,7 @@ entity PC_reg is
 	generic(N	: integer :=32);
 	port(data_in	: in std_logic_vector(N-1 downto 0);
 	     reset_PC	: in std_logic;
-	     wr_en_PC	: in std_logic;
+	     stallPC	: in std_logic;
 	     data_out	: out std_logic_vector(N-1 downto 0);
 	     clk	: in std_logic);
 end PC_reg;
@@ -13,7 +13,15 @@ architecture structure of PC_reg is
 
 signal s_data	:  std_logic_vector(N-1 downto 0);
 signal s_we	:  std_logic;
+signal s_wr_en	:  std_logic;
 signal resetTO  : std_logic_vector (31 downto 0);
+
+component invg
+
+	port(i_A          : in std_logic;
+       o_F          : out std_logic);
+end component;
+
   --OR gate component
 component org2
 	port(i_A	: in std_logic;
@@ -46,9 +54,14 @@ begin
 
 	resetTO <= x"00400000";
 
+	notStall:invg
+	port map(i_A  =>stallPC,
+			o_F  =>s_wr_en);
+	
+	
 	rstORwre: org2
 	port map(i_A => reset_PC,
-		 i_B => wr_en_PC,
+		 i_B => s_wr_en,
 		 o_F => s_we);
 
 	chooseData: mux32_2to1

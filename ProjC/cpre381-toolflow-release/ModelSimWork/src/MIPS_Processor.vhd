@@ -70,7 +70,7 @@ component pc_reg
 generic(	N	: integer :=32);
 port(		 data_in	: in std_logic_vector(N-1 downto 0);
 	    	 reset_PC	: in std_logic;
-	     	 wr_en_PC	: in std_logic;
+	     	 stallPC	: in std_logic;
 	    	 data_out	: out std_logic_vector(N-1 downto 0);
 	    	 clk	: in std_logic);
 end component;
@@ -545,7 +545,7 @@ PC: pc_reg
 generic map( N => 32)
 port map(    data_in	=> s_finalPC,	--Abhilash added: change pcadder_out to whatever final signal happens to be (s_finalPC)
 	     reset_PC	=> iRST,
-	     wr_en_PC	=> '1',
+	     stallPC	=> s_PC_stall,
 	     data_out	=> pc_out,
 	     clk	=> iCLK);
 
@@ -579,7 +579,18 @@ port map(
 		fwd_branchB => s_fwd_branchB);
 
 
-
+hazard_boi: hzd_detect
+port map(	in_EXregAddr => s_finalWriteAddr,
+		EX_memRead => o_MemReadEX,
+		in_ID_rs => InstrOutID(25 downto 21),
+		in_ID_rt =>InstrOutID(20 downto 16),
+		in_PCsrc => s_PCsrc,
+		in_Jump	 => s_Jump,
+		IDEX_flush => s_IDEX_flush,
+		IDEX_stall => s_IDEX_stall,
+		IFID_flush => s_IFID_flush,
+		IFID_stall => s_IFID_stall,
+		PC_stall => s_PC_stall  );
 
 
 
@@ -588,8 +599,8 @@ port map(
 
 IF_IDpipe : IF_ID
 port map(
-		 flush	=> '0',
-	     stall	=> '0',
+		 flush	=> s_IFID_flush,
+	     stall	=> s_IFID_stall,
 		 reset	=> iRST,
 	     data32in	=> s_Inst, -- the instruction
 	     PCreg_in	=> pcadder_out, --the PC+4 value from IF stage
@@ -731,8 +742,8 @@ port map(	i_A	=> InstrOutID(15 downto 0),
 
 --ID/EX PIPELINE GOES HERE  just after the regfile
 ID_EXpipe : ID_EX
-port map(flush => '0',
-	     stall => '0',
+port map(flush => s_IDEX_flush,
+	     stall => s_IDEX_stall,
 		 clk => iCLK,
 		 reset => iRST,
 	   
